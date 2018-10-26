@@ -431,7 +431,7 @@ $("#cms_servicio_agentes-frm").submit(function(event) {
 
 
       var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-      
+
 var pieChart       = new Chart(pieChartCanvas)
 var PieData        = [
   {
@@ -484,5 +484,88 @@ pieChart.Doughnut(PieData, pieOptions)
   });
 });
 
+
+
+$("#cms_llamadas_prod-frm").submit(function(event) {
+  //stop submit the form, we will post it manually.
+  event.preventDefault();
+  // Get form
+  var form = $('#cms_llamadas_prod-frm')[0];
+  // Create an FormData object
+  var data = new FormData(form);
+  // disabled the submit button
+  $("#report1-frm-btn").prop("disabled", true);
+
+  $.ajax({
+    type: "POST",
+    enctype: 'multipart/form-data',
+    url: "php/cms_llamadas_prod.php",
+    data: data,
+    processData: false,
+    contentType: false,
+    cache: false,
+    timeout: 600000,
+    success: function(data) {
+      $("#report1-frm-btn").prop("disabled", false);
+      var json = $.parseJSON(data)
+      console.log(json);
+      var tablagral = $('#transactions-table').DataTable({
+        "dom": 'Bfrtip',
+        "fixedHeader": false,
+        "scrollX": false,
+        "lengthMenu": [
+          [5, 10, 15, -1],
+          [10, 25, 50, "All"]
+        ],
+        "buttons": [{
+            extend: 'copyHtml5',
+            footer: true
+          },
+          {
+            extend: 'excelHtml5',
+            footer: true,
+            exportOptions: {
+              extension: '.xls'
+            }
+          },
+          {
+            extend: 'csvHtml5',
+            footer: true
+          },
+          {
+            extend: 'pdfHtml5',
+            footer: true
+          },
+          {
+            extend: 'print',
+            footer: true
+          }
+        ],
+        "destroy": true,
+        "processing": true,
+        "data": json,
+        "columns": [{
+            data: "logid"
+          },
+          {
+            data: "split"
+          },
+          {
+            data: "i_availtime"
+          },
+          {
+            data: "row_date"
+          }
+
+        ]
+
+      });
+    },
+    error: function(e) {
+      console.log("ERROR : ", e);
+      $("#report1-frm-btn").prop("disabled", false);
+    }
+  });
+});
 
 });
