@@ -13,10 +13,9 @@ function obtenerdatos($conn2, $fechainicio, $variable)
 	{
 	// Creamos una sentencia preparada para evitar inyecciones SQL
   //Obtenemos la lista del IVR que contengan un UCID y especificamos el Rango de Fechas en nuestra Sentencia Preparada
-	$stmt = $conn2->prepare("SELECT  logid, split, row_date, acdcalls FROM DAGENT
+	$stmt = $conn2->prepare("SELECT logid, split, i_availtime, row_date FROM DAGENT
 where row_date = :fechainicio
 and logid=:variable
-
 ;");
 	// Enlazamos las variables a nuestros apuntadores para Prepared Statements y Ejecutamos el Query
 	$stmt->execute([':fechainicio' => $fechainicio, ':variable' => $variable]);
