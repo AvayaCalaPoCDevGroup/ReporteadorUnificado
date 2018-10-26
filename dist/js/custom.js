@@ -568,4 +568,80 @@ $("#cms_llamadas_prod-frm").submit(function(event) {
   });
 });
 
+$("#cms_tiempolog_prod-frm").submit(function(event) {
+  //stop submit the form, we will post it manually.
+  event.preventDefault();
+  // Get form
+  var form = $('#cms_tiempolog_prod-frm')[0];
+  // Create an FormData object
+  var data = new FormData(form);
+  // disabled the submit button
+  $("#report1-frm-btn").prop("disabled", true);
+
+  $.ajax({
+    type: "POST",
+    enctype: 'multipart/form-data',
+    url: "php/cms_tiempolog_prod.php",
+    data: data,
+    processData: false,
+    contentType: false,
+    cache: false,
+    timeout: 600000,
+    success: function(data) {
+      $("#report1-frm-btn").prop("disabled", false);
+      var json = $.parseJSON(data)
+      console.log(json);
+      var tablagral = $('#transactions-table').DataTable({
+        "dom": 'Bfrtip',
+        "fixedHeader": false,
+        "scrollX": false,
+        "lengthMenu": [
+          [5, 10, 15, -1],
+          [10, 25, 50, "All"]
+        ],
+        "buttons": [{
+            extend: 'copyHtml5',
+            footer: true
+          },
+          {
+            extend: 'excelHtml5',
+            footer: true,
+            exportOptions: {
+              extension: '.xls'
+            }
+          },
+          {
+            extend: 'csvHtml5',
+            footer: true
+          },
+          {
+            extend: 'pdfHtml5',
+            footer: true
+          },
+          {
+            extend: 'print',
+            footer: true
+          }
+        ],
+        "destroy": true,
+        "processing": true,
+        "data": json,
+        "columns": [{
+            data: "logid"
+          },
+          {
+            data: "ti_stafftime"
+          }
+
+        ]
+
+      });
+    },
+    error: function(e) {
+      console.log("ERROR : ", e);
+      $("#report1-frm-btn").prop("disabled", false);
+    }
+  });
+});
+
 });
