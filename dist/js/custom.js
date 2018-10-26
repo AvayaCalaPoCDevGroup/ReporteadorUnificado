@@ -137,6 +137,7 @@ $(document).ready(function() {
     });
   });
 
+//IVR
 
   $("#ivrentrantes-frm").submit(function(event) {
     //stop submit the form, we will post it manually.
@@ -324,5 +325,41 @@ $(document).ready(function() {
     });
   });
 
+///CMS
+
+
+$("#cms_recibidas_agentes-frm").submit(function(event) {
+  //stop submit the form, we will post it manually.
+  event.preventDefault();
+  // Get form
+  var form = $('#cms_recibidas_agentes-frm')[0];
+  // Create an FormData object
+  var data = new FormData(form);
+  // disabled the submit button
+  $("#report1-frm-btn").prop("disabled", true);
+
+  $.ajax({
+    type: "POST",
+    enctype: 'multipart/form-data',
+    url: "php/cms_recibidas_agentes.php",
+    data: data,
+    processData: false,
+    contentType: false,
+    cache: false,
+    timeout: 600000,
+    success: function(data) {
+      $("#report1-frm-btn").prop("disabled", false);
+      console.log(data);
+       var json = $.parseJSON(data)
+       console.log(json);
+        var variable  = json["0"].callsoffered.toString();
+        $("#variable").text(variable);
+    },
+    error: function(e) {
+      console.log("ERROR : ", e);
+      $("#report1-frm-btn").prop("disabled", false);
+    }
+  });
+});
 
 });
